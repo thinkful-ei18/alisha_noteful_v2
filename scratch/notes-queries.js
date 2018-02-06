@@ -49,3 +49,19 @@ const knex = require('../knex');
 //   .from('notes')
 //   .where({id: '1002'})
 //   .then(results => console.log(JSON.stringify(results, null, 4)));
+
+
+/* ========== POST/CREATE ITEM ========== */
+
+const newItem = {
+  title: 'Earl Nightinggale',
+  content: 'Never give up on a dream just because of the time it will take to accomplish it. The time will pass anyway.'
+};
+
+knex.insert({
+  title: `${newItem.title}`,
+  content: `${newItem.content}`
+})
+  .into('notes')
+  .returning(['id', 'title', 'content', 'created'])
+  .then(results => console.log(JSON.stringify(results, null, 4)));
