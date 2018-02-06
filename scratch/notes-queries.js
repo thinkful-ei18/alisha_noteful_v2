@@ -7,24 +7,24 @@ const knex = require('../knex');
 
 /* ========== GET/READ ALL NOTES ========== */
 
-// let searchTerm = 'ways';
+let searchTerm = '';
 
-// knex.select('*')
-//   .from('notes')
-//   .where('title', 'like', `%${searchTerm}%`)
-//   .then(results => console.log(JSON.stringify(results, null, 4)));
+knex.select('*')
+  .from('notes')
+  .where('title', 'like', `%${searchTerm}%`)
+  .then(results => console.log(JSON.stringify(results, null, 4)));
 
 
 /* ========== GET/READ SINGLE NOTES ========== */
 
-// const noteId = 1007;
+const noteId = 1007;
 
-// knex.select('')
-//   .from('notes')
-//   .where({
-//     id: `${noteId}`
-//   })
-//   .then(results => console.log(JSON.stringify(results, null, 4)));
+knex.select('')
+  .from('notes')
+  .where({
+    id: `${noteId}`
+  })
+  .then(results => console.log(JSON.stringify(results, null, 4)));
 
 
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
@@ -35,15 +35,15 @@ const knex = require('../knex');
 //   content: 'The will to win means nothing without the will to prepare.'
 // };
 
-// knex('notes')
-//   .where({
-//     id: `${noteId}`
-//   })
-//   .update({
-//     title: `${updateObj.title}`,
-//     content: `${updateObj.content}`
-//   })
-//   .then(results => console.log(JSON.stringify(results, null, 4)));
+knex('notes')
+  .where({
+    id: `${noteId}`
+  })
+  .update({
+    title: `${updateObj.title}`,
+    content: `${updateObj.content}`
+  })
+  .then(results => console.log(JSON.stringify(results, null, 4)));
 
 // knex.select('')
 //   .from('notes')
@@ -58,27 +58,27 @@ const knex = require('../knex');
 //   content: 'Never give up on a dream just because of the time it will take to accomplish it. The time will pass anyway.'
 // };
 
-// knex.insert({
-//   title: `${newItem.title}`,
-//   content: `${newItem.content}`
-// })
-//   .into('notes')
-//   .returning(['id', 'title', 'content', 'created'])
-//   .then(results => console.log(JSON.stringify(results, null, 4)));
+knex.insert({
+  title: `${newItem.title}`,
+  content: `${newItem.content}`
+})
+  .into('notes')
+  .returning(['id', 'title', 'content', 'created'])
+  .then(results => console.log(JSON.stringify(results, null, 4)));
 
 
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 
 // const id = 1003;
 
-// knex('notes')
-//   .where({
-//     id: `${id}`
-//   })
-//   .del()
-//   .then(results => console.log(JSON.stringify(results, null, 4)));
-
 knex('notes')
-  .orderBy('id')
-  .limit(4)
+  .where({
+    id: `${id}`
+  })
+  .del()
   .then(results => console.log(JSON.stringify(results, null, 4)));
+
+// knex('notes')
+//   .orderBy('id')
+//   .limit(4)
+//   .then(results => console.log(JSON.stringify(results, null, 4)));

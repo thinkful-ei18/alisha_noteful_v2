@@ -21,7 +21,7 @@ const noteful = (function () {
         <a href="#" class="name js-note-link">${item.title}</a>
         <button class="removeBtn js-note-delete-button">X</button>
         <div class="metadata">
-            <div class="date">${moment(item.date).calendar()}</div>
+            <div class="date">${moment(item.created).calendar()}</div>
           </div>
       </li>`);
     return listItems.join('');
@@ -46,7 +46,7 @@ const noteful = (function () {
 
       api.details(`/v2/notes/${noteId}`)
         .then((response) => {
-          store.currentNote = response;
+          store.currentNote = response[0];
           render();
         });
     });
@@ -81,10 +81,12 @@ const noteful = (function () {
       if (store.currentNote.id) {
         api.update(`/v2/notes/${noteObj.id}`, noteObj)
           .then(updateResponse => {
+            console.log(updateResponse);
             store.currentNote = updateResponse;
             return api.search('/v2/notes', store.currentQuery);
           })
           .then(response => {
+            console.log(response);
             store.notes = response;
             render();
           });
