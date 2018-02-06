@@ -53,15 +53,32 @@ const knex = require('../knex');
 
 /* ========== POST/CREATE ITEM ========== */
 
-const newItem = {
-  title: 'Earl Nightinggale',
-  content: 'Never give up on a dream just because of the time it will take to accomplish it. The time will pass anyway.'
-};
+// const newItem = {
+//   title: 'Earl Nightinggale',
+//   content: 'Never give up on a dream just because of the time it will take to accomplish it. The time will pass anyway.'
+// };
 
-knex.insert({
-  title: `${newItem.title}`,
-  content: `${newItem.content}`
-})
-  .into('notes')
-  .returning(['id', 'title', 'content', 'created'])
+// knex.insert({
+//   title: `${newItem.title}`,
+//   content: `${newItem.content}`
+// })
+//   .into('notes')
+//   .returning(['id', 'title', 'content', 'created'])
+//   .then(results => console.log(JSON.stringify(results, null, 4)));
+
+
+/* ========== DELETE/REMOVE A SINGLE ITEM ========== */
+
+// const id = 1003;
+
+// knex('notes')
+//   .where({
+//     id: `${id}`
+//   })
+//   .del()
+//   .then(results => console.log(JSON.stringify(results, null, 4)));
+
+knex('notes')
+  .orderBy('id')
+  .limit(4)
   .then(results => console.log(JSON.stringify(results, null, 4)));
