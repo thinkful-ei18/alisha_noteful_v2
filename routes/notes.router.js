@@ -18,13 +18,14 @@ const notes = simDB.initialize(data);
 router.get('/notes', (req, res, next) => {
   const { searchTerm } = req.query;
 
-  knex.select('')
+  knex.select('id', 'title', 'content', 'created')
     .from('notes')
     .where(function() {
       if (searchTerm) {
         this.where('title', 'like', `%${searchTerm}%`);
       }
     })
+    .orderBy('created', 'desc')
     .then(notes => {
       res.json(notes);
     })
@@ -36,12 +37,11 @@ router.get('/notes/:id', (req, res, next) => {
   const noteId = req.params.id;
 
 
-  knex.select('')
+  knex.select('id', 'title', 'content', 'created')
     .from('notes')
     .where({
       id: `${noteId}`
     })
-    .orderBy('created')
     .then(item => {
       if (item) {
         res.json(item);
