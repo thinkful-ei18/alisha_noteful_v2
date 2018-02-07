@@ -35,16 +35,18 @@ router.get('/notes', (req, res, next) => {
 
 /* ========== GET/READ SINGLE NOTES ========== */
 router.get('/notes/:id', (req, res, next) => {
+  
   const noteId = req.params.id;
 
-  knex.select('id', 'title', 'content', 'created')
+  knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name')
     .from('notes')
+    .leftJoin('folders', 'notes.folder_id', 'folders.id')
     .where({
-      id: `${noteId}`
+      'notes.id': `${noteId}`
     })
-    .then(item => {
-      if (item) {
-        res.json(item);
+    .then(note => {
+      if (note) {
+        res.json(note);
       } else {
         next();
       }
