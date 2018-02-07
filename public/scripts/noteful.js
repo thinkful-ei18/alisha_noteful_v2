@@ -81,12 +81,10 @@ const noteful = (function () {
       if (store.currentNote.id) {
         api.update(`/v2/notes/${noteObj.id}`, noteObj)
           .then(updateResponse => {
-            console.log(updateResponse);
             store.currentNote = updateResponse;
             return api.search('/v2/notes', store.currentQuery);
           })
           .then(response => {
-            console.log(response);
             store.notes = response;
             render();
           });

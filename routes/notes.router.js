@@ -67,13 +67,12 @@ router.put('/notes/:id', (req, res, next) => {
   });
 
   /***** Never trust users - validate input *****/
-  if (!updateObj.title) {
-    const err = new Error('Missing `title` in request body');
+  if (!updateObj.title || !updateObj.content) {
+    const err = new Error('Missing the `title` or `content` in the request body');
     err.status = 400;
     return next(err);
   }
 
-  
   knex('notes')
     .where({
       id: `${noteId}`
@@ -101,13 +100,12 @@ router.post('/notes', (req, res, next) => {
   
   const newItem = { title, content };
   /***** Never trust users - validate input *****/
-  if (!newItem.title) {
-    const err = new Error('Missing `title` in request body');
+  if (!newItem.title || !newItem.content) {
+    const err = new Error('Missing the `title` or `content` in the request body');
     err.status = 400;
     return next(err);
   }
 
-  
   knex.insert({
     title: `${newItem.title}`,
     content: `${newItem.content}`
@@ -125,7 +123,6 @@ router.post('/notes', (req, res, next) => {
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/notes/:id', (req, res, next) => {
   const id = req.params.id;
-  
   
   knex('notes')
     .where({
