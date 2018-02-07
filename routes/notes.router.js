@@ -18,8 +18,9 @@ const notes = simDB.initialize(data);
 router.get('/notes', (req, res, next) => {
   const { searchTerm } = req.query;
 
-  knex.select('id', 'title', 'content', 'created')
+  knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name')
     .from('notes')
+    .leftJoin('folders', 'notes.folder_id', 'folders.id')
     .where(function() {
       if (searchTerm) {
         this.where('title', 'like', `%${searchTerm}%`);
