@@ -36,7 +36,6 @@ router.get('/notes', (req, res, next) => {
 router.get('/notes/:id', (req, res, next) => {
   const noteId = req.params.id;
 
-
   knex.select('id', 'title', 'content', 'created')
     .from('notes')
     .where({

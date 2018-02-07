@@ -1,6 +1,8 @@
 --`psql -U dev -f ./db/noteful.2.sql -d noteful-app`
 SELECT CURRENT_DATE;
 
+/*********************************
+NOTES TABLE SETUP *********************************/
 DROP TABLE IF EXISTS notes;
 
 CREATE TABLE notes (
@@ -56,3 +58,47 @@ INSERT INTO notes (title, content) VALUES
 
 -- -- get all notes
 -- SELECT * FROM notes;
+
+
+/*********************************
+FOLDERS TABLE SETUP *********************************/
+
+DROP TABLE IF EXISTS folders;
+
+CREATE TABLE folders
+(
+  id serial PRIMARY KEY,
+  name text NOT NULL UNIQUE
+);
+
+ALTER SEQUENCE folders_id_seq RESTART WITH 100;
+
+ALTER TABLE notes ADD COLUMN 
+  folder_id int REFERENCES folders 
+  ON DELETE SET NULL; -- or RESTRICT
+
+INSERT INTO folders (name) VALUES
+  ('Archive'),
+  ('Drafts'),
+  ('Personal'),
+  ('Work');
+
+INSERT INTO notes (title, content, folder_id)
+VALUES
+  (
+    '5 life lessons learned from cats',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    100
+  );
+
+  -- -- get all folders
+-- SELECT * FROM folders;
+
+-- -- get all notes with folders
+-- SELECT * FROM notes
+-- INNER JOIN folders ON notes.folder_id = folders.id;
+
+-- -- get all notes, show folders if they exists otherwise null
+-- SELECT * FROM notes
+-- LEFT JOIN folders ON notes.folder_id = folders.id;
+  
