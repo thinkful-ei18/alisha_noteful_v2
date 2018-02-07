@@ -61,7 +61,8 @@ INSERT INTO notes (title, content) VALUES
 
 
 /*********************************
-FOLDERS TABLE SETUP *********************************/
+FOLDERS TABLE SETUP
+*********************************/
 
 DROP TABLE IF EXISTS folders;
 
