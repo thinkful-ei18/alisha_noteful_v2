@@ -50,7 +50,8 @@ router.put('/tags/:id', (req, res, next) => {
   knex.update({ name })
     .from('tags')
     .where({ id: `${req.params.id}`})
-    .then( tag => {
+    .returning(['id', 'name'])
+    .then( ([tag]) => {
       if (tag) {
         res.json(tag);
       } else {
@@ -97,6 +98,18 @@ router.post('/tags', (req, res, next) => {
 /* ========== DELETE/REMOVE A SINGLE TAG ========== */
 router.delete('/tags/:id', (req, res, next) => {
   
+  knex.del()
+    .from('tags')
+    .where({id: req.params.id})
+    .then( note => {
+      if (note) {
+        res.status(204).end();
+      } else {
+        next();
+      }
+    })
+    .catch(err => next(err));
+
 });
 
 
