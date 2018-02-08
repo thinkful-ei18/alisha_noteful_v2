@@ -70,6 +70,27 @@ router.put('/tags/:id', (req, res, next) => {
 /* ========== POST/CREATE TAG ========== */
 router.post('/tags', (req, res, next) => {
   
+  const { name } = req.body;
+
+  if (!name) {
+    const err = new Error('Missing the `tag name` in the request body');
+    err.status = 400;
+    return next(err);
+  }
+
+  knex.insert({ name })
+    .from('tags')
+    .returning(['id', 'name'])
+    .then( ([tag]) => {
+      res.location(`${req.originalUrl}${tag.id}`).status(201).json(tag);
+    })
+    .catch(err => {
+      if (err.code === UNIQUE_VIOLATION && err.constraint === 'tags_name_key') {
+        err = new Error('Tags name is already taken');
+        err.status = 409;
+      }
+      next(err);
+    });
   
 });
 
