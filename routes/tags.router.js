@@ -4,6 +4,7 @@ const knex = require('../knex');
 const express = require('express');
 
 const router = express.Router();
+const { UNIQUE_VIOLATION } = require('pg-error-constants');
 
 
 /* ========== GET/READ ALL TAGS ========== */
@@ -38,6 +39,31 @@ router.get('/tags/:id', (req, res, next) => {
 /* ========== PUT/UPDATE A SINGLE TAG ========== */
 router.put('/tags/:id', (req, res, next) => {
 
+  const { name } = req.body;
+
+  if (!name) {
+    const err = new Error('Missing the `tag name` in the request body');
+    err.status = 400;
+    return next(err);
+  }
+
+  knex.update({ name })
+    .from('tags')
+    .where({ id: `${req.params.id}`})
+    .then( tag => {
+      if (tag) {
+        res.json(tag);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      if (err.code === UNIQUE_VIOLATION && err.constraint === 'tags_name_key') {
+        err = new Error('Tags name is already taken');
+        err.status = 409;
+      }
+      next(err);
+    });
 
 });
 
