@@ -7,7 +7,7 @@ const router = express.Router();
 
 /* Notes can belong to a folder because we've altered the notes table. However, creating this file is what will allow the folders to be viewed from the browser */
 
-/* ===== GET ALL FOLDERS ===== */
+/* ===== GET ALL FOLDERS/TAGS ===== */
 router.get('/folders', (req, res, next) => {
 
   knex.select('id', 'name')
@@ -21,15 +21,13 @@ router.get('/folders', (req, res, next) => {
 });
 
 
-/* ===== GET FOLDER BY ID ===== */
+/* ===== GET SINGLE FOLDER/TAG BY ID ===== */
 router.get('/folders/:id', (req, res, next) => {
-  
-  const folderId = req.params.id;
 
   knex.select('id', 'name')
     .from('folders')
     .where({
-      id: `${folderId}`
+      id: `${req.params.id}`
     })
     .then(folder => {
       if (folder) {
@@ -43,28 +41,22 @@ router.get('/folders/:id', (req, res, next) => {
 });
 
 
-/* ===== FOLDER UPDATE ===== */
+/* ===== FOLDER/TAG UPDATE ===== */
 router.put('/folders/:id', (req, res, next) => {
 
-  const folderId = req.params.id;
-  const updateObj = {
-    name: `${req.body.name}`
-  };
+  const { name } = req.body;
 
-  if (!updateObj.name) {
+  if (!name) {
     const err = new Error('Missing the `folder name` in the request body');
     err.status = 400;
     return next(err);
   }
 
-  knex('folders')
-    .where({
-      id: `${folderId}`
-    })
-    .update({
-      name: `${updateObj.name}`
-    })
-    .then(folder => {
+  knex.update({ name })
+    .from('folders')
+    .where({ id: `${req.params.id}`})
+    .returning(['id', 'name'])
+    .then(([folder]) => {
       if (folder) {
         res.json(folder);
       } else {
@@ -76,24 +68,23 @@ router.put('/folders/:id', (req, res, next) => {
 });
 
 
-/* ===== CREATE A FOLDER ===== */
+/* ===== CREATE A FOLDER/TAG ===== */
 router.post('/folders', (req, res, next) => {
 
-  const { newFolder } = req.body;
+  const { name } = req.body;
 
-  if (!newFolder.name) {
+  if (!name) {
     const err = new Error('Missing the `folder name` in the request body');
     err.status = 400;
     return next(err);
   }
 
-  knex.insert({
-    name: `${newFolder.name}`
-  })
+  knex.insert({ name })
     .into('folders')
-    .then(folder => {
+    .returning(['id', 'name']) // if you don't put this in an array, once you create the folder you'll only be returned the value of the id, not the object. i.e. '104' instead of '{"id": "104", "name":"Home"}'
+    .then(([folder]) => { // so now you must destructure the array
       if (folder) {
-        res.location(`http://${req.headers.host}/folders/${folder.id}`).status(201).json(folder);
+        res.location(`http://${req.originalUrl}/${folder.id}`).status(201).json(folder);
       }
     })
     .catch(err => next(err));
@@ -102,7 +93,7 @@ router.post('/folders', (req, res, next) => {
 });
 
 
-/* ===== DELETE A FOLDER ===== */
+/* ===== DELETE A FOLDER/TAG ===== */
 router.delete('/folders/:id', (req, res, next) => {
 
 });
