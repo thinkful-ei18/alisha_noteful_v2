@@ -10,7 +10,7 @@ const router = express.Router();
 
 /* ========== GET/READ ALL NOTES ========== */
 router.get('/notes', (req, res, next) => {
-  const { searchTerm } = req.query;
+  const { searchTerm, folderId } = req.query;
 
   knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name')
     .from('notes')
@@ -18,6 +18,11 @@ router.get('/notes', (req, res, next) => {
     .where(function() {
       if (searchTerm) {
         this.where('title', 'like', `%${searchTerm}%`);
+      }
+    })
+    .where(function() {
+      if (folderId) {
+        this.where('folder_id', folderId);
       }
     })
     .orderBy('created', 'desc')
@@ -38,7 +43,7 @@ router.get('/notes/:id', (req, res, next) => {
     .where({
       'notes.id': `${noteId}`
     })
-    .then(note => {
+    .then(([note]) => {
       if (note) {
         res.json(note);
       } else {
