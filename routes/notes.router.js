@@ -6,14 +6,8 @@ const knex = require('../knex');
 // Create an router instance (aka "mini-app")
 const router = express.Router();
 
-// TEMP: Simple In-Memory Database
-/* 
-const data = require('../db/notes');
-const simDB = require('../db/simDB');
-const notes = simDB.initialize(data);
-*/
 
-// Get All (and search by query)
+
 /* ========== GET/READ ALL NOTES ========== */
 router.get('/notes', (req, res, next) => {
   const { searchTerm } = req.query;
@@ -55,18 +49,13 @@ router.get('/notes/:id', (req, res, next) => {
 
 });
 
-/* ========== PUT/UPDATE A SINGLE ITEM ========== */
+/* ========== PUT/UPDATE A SINGLE NOTE ========== */
 router.put('/notes/:id', (req, res, next) => {
-  console.log('CHECKING PUT REQ BODY', req.body);
+  
   const noteId = req.params.id;
   const { title, content, folder_id } = req.body;
 
   /***** Never trust users - validate input *****/
-  // const updateNote = {
-  //   title,
-  //   content,
-  //   folder_id
-  // };
 
   if (!title || !content) {
     const err = new Error('Must include the `title` and `content` in the request body to update!');
@@ -74,7 +63,6 @@ router.put('/notes/:id', (req, res, next) => {
     return next(err);
   }
 
-  // why can't I use '.where({ id: `${noteId}` })' ??
   knex('notes')
     .update({title, content, folder_id, created: new Date()})
     .where({ id: `${noteId}`})
@@ -98,12 +86,6 @@ router.put('/notes/:id', (req, res, next) => {
 /* ========== POST/CREATE NOTE ========== */
 router.post('/notes', (req, res, next) => {
   const { title, content, folder_id } = req.body; // destructured object
-  
-  const newNote = {
-    title,
-    content,
-    folder_id
-  };
 
   /***** Never trust users - validate input *****/
   if (!title || !content) {
@@ -114,7 +96,7 @@ router.post('/notes', (req, res, next) => {
  
   let noteId;
 
-  knex.insert(newNote) // add the newNote object
+  knex.insert({ title, content, folder_id }) // add the prop's listed
     .into('notes') // to the notes table
     .returning('id') // return the id property, which is an array, that was added on the server with the created property. i.e [1004]
     .then(([id]) => { // destructure that array to get the actual value
@@ -133,15 +115,15 @@ router.post('/notes', (req, res, next) => {
     });
 });
 
-/* ========== DELETE/REMOVE A SINGLE ITEM ========== */
+/* ========== DELETE/REMOVE A SINGLE NOTE ========== */
 router.delete('/notes/:id', (req, res, next) => {
   const id = req.params.id;
   
-  knex('notes')
+  knex.del()
+    .from('notes')
     .where({
       id: `${id}`
     })
-    .del()
     .then(count => {
       if (count) {
         res.status(204).end();
