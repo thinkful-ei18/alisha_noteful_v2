@@ -33,7 +33,7 @@ router.get('/notes', (req, res, next) => {
     .catch(err => next(err)); 
 });
 
-/* ========== GET/READ SINGLE NOTES ========== */
+/* ========== GET/READ SINGLE NOTE ========== */
 router.get('/notes/:id', (req, res, next) => {
   
   const noteId = req.params.id;
@@ -70,7 +70,7 @@ router.put('/notes/:id', (req, res, next) => {
 
   /***** Never trust users - validate input *****/
   if (!updateObj.title || !updateObj.content) {
-    const err = new Error('Missing the `title` or `content` in the request body');
+    const err = new Error('Must include the `title` and `content` in the request body to update!');
     err.status = 400;
     return next(err);
   }
@@ -84,10 +84,9 @@ router.put('/notes/:id', (req, res, next) => {
       content: `${updateObj.content}`,
       created: new Date()
     })
-    .then(item => {
-      console.log(item);
-      if (item) {
-        res.json(item);
+    .then(note => {
+      if (note) {
+        res.json(note);
       } else {
         next();
       }
@@ -96,30 +95,41 @@ router.put('/notes/:id', (req, res, next) => {
   
 });
 
-/* ========== POST/CREATE ITEM ========== */
+/* ========== POST/CREATE NOTE ========== */
 router.post('/notes', (req, res, next) => {
-  const { title, content } = req.body;
-  
-  const newItem = { title, content };
+  const { title, content, folder_id } = req.body; // destructured object
+  console.log('req.body', req.body);
+  const newNote = {
+    title,
+    content,
+    folder_id
+  };
+
   /***** Never trust users - validate input *****/
-  if (!newItem.title || !newItem.content) {
-    const err = new Error('Missing the `title` or `content` in the request body');
+  if (!title || !content) {
+    const err = new Error('Must include the `title` and `content` in the request body to create a new note!');
     err.status = 400;
     return next(err);
   }
+ 
+  let noteId;
 
-  knex.insert({
-    title: `${newItem.title}`,
-    content: `${newItem.content}`
-  })
-    .into('notes')
-    .then(item => {
-      if (item) {
-        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-      } 
+  knex.insert(newNote) // add the newNote object
+    .into('notes') // to the notes table
+    .returning('id') // return the id property, which is an array, that was added on the server with the created property. i.e [1004]
+    .then(([id]) => { // destructure that array to get the actual value
+      noteId = id; // set the variable noteId that was declared above, to the value of the id. i.e. 1004
+      return knex.select('notes.id', 'title', 'content', 'folder_id', 'folders.name as folder_name') // target the stated columns between the 'notes' and 'folders' tables
+        .from('notes') // display all rows from 'notes', but only the id, title, content && folder_id columns
+        .leftJoin('folders', 'notes.folder_id', 'folders.id') // add the name of any folder whose id column matches the notes.folder_id column to the corresponding 'notes' row
+        .where('notes.id', noteId); // filter further to show the one merged row whose notes.id matches the id # that was destructured
     })
-    .catch(err => next(err));
-  
+    .then(([result]) => { 
+      res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 });
 
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
