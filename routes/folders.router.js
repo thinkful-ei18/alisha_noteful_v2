@@ -7,7 +7,7 @@ const router = express.Router();
 
 /* Notes can belong to a folder because we've altered the notes table. However, creating this file is what will allow the folders to be viewed from the browser */
 
-/* ===== GET ALL FOLDERS/TAGS ===== */
+/* ===== GET ALL FOLDERS ===== */
 router.get('/folders', (req, res, next) => {
 
   knex.select('id', 'name')
@@ -21,7 +21,7 @@ router.get('/folders', (req, res, next) => {
 });
 
 
-/* ===== GET SINGLE FOLDER/TAG BY ID ===== */
+/* ===== GET SINGLE FOLDER BY ID ===== */
 router.get('/folders/:id', (req, res, next) => {
 
   knex.select('id', 'name')
@@ -41,7 +41,7 @@ router.get('/folders/:id', (req, res, next) => {
 });
 
 
-/* ===== FOLDER/TAG UPDATE ===== */
+/* ===== FOLDER UPDATE ===== */
 router.put('/folders/:id', (req, res, next) => {
 
   const { name } = req.body;
@@ -68,7 +68,7 @@ router.put('/folders/:id', (req, res, next) => {
 });
 
 
-/* ===== CREATE A FOLDER/TAG ===== */
+/* ===== CREATE A FOLDER ===== */
 router.post('/folders', (req, res, next) => {
 
   const { name } = req.body;
@@ -93,7 +93,7 @@ router.post('/folders', (req, res, next) => {
 });
 
 
-/* ===== DELETE A FOLDER/TAG ===== */
+/* ===== DELETE A FOLDER ===== */
 router.delete('/folders/:id', (req, res, next) => {
 
   knex.del()
