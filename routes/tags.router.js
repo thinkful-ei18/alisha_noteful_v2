@@ -9,6 +9,13 @@ const router = express.Router();
 /* ========== GET/READ ALL TAGS ========== */
 router.get('/tags', (req, res, next) => {
   
+  knex.select('id', 'name')
+    .from('tags')
+    .then(tags => {
+      res.json(tags);
+    })
+    .catch( err => next(err));
+
 });
 
 /* ========== GET/READ SINGLE TAG ========== */
