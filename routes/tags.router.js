@@ -21,6 +21,17 @@ router.get('/tags', (req, res, next) => {
 /* ========== GET/READ SINGLE TAG ========== */
 router.get('/tags/:id', (req, res, next) => {
   
+  knex.select('id', 'name')
+    .from('tags')
+    .where({ id: `${req.params.id}`})
+    .then( tag => {
+      if (tag) {
+        res.json(tag);
+      } else {
+        next();
+      }
+    })
+    .catch( err => next(err));
 
 });
 
