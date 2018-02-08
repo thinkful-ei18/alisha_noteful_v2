@@ -96,6 +96,18 @@ router.post('/folders', (req, res, next) => {
 /* ===== DELETE A FOLDER/TAG ===== */
 router.delete('/folders/:id', (req, res, next) => {
 
+  knex.del()
+    .from('folders')
+    .where({id: `${req.params.id}`})
+    .then(result => {
+      if (result) {
+        res.status(204).end();
+      } else {
+        next();
+      }
+    })
+    .catch(err => next(err));
+    
 });
 
 
