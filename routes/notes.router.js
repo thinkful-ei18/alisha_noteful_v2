@@ -171,14 +171,13 @@ router.post('/notes', (req, res, next) => {
 
 /* ========== DELETE/REMOVE A SINGLE NOTE ========== */
 router.delete('/notes/:id', (req, res, next) => {
-  const id = req.params.id;
   
   knex.del()
     .from('notes')
     .where({
-      id: `${id}`
+      id: `${req.params.id}`
     })
-    .then(count => {
+    .then( count => {
       if (count) {
         res.status(204).end();
       } else {
