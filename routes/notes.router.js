@@ -33,8 +33,8 @@ router.get('/notes', (req, res, next) => {
         const subQuery = knex.select('notes.id')
           .from('notes')
           .innerJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
-          .where( {'notes_tags.tag_id': `${tagId}`} );
-        this.whereIn( {'notes.id': `${subQuery}`} );
+          .where('notes_tags.tag_id', tagId );
+        this.whereIn('notes.id', subQuery );
       }
     })
     .orderBy('created', 'desc')
@@ -60,16 +60,15 @@ router.get('/notes/:id', (req, res, next) => {
     .leftJoin('folders', 'notes.folder_id', 'folders.id')
     .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
     .leftJoin('tags', 'tags.id', 'notes_tags.tag_id')
-    .where({
-      'notes.id': `${noteId}`
-    })
+    .where( 'notes.id', noteId )
     .then( note => { // if the noteId has multiple tags, the array will contain as many objects as there are tags. the only different prop between each one will be the tag prop. before each object is the word 'anonymous'
+      console.log('NOTE', note);
       if (note) {
         const tree = new Treeize(); // initiate a new instance of Treeize
         tree.setOptions({ output: { prune: false } }); // don't filter out props with a null value
         tree.grow(note); // behind the scenes work with baseOptions, data, stats and options objects
         const hydrated = tree.getData(); // the same array of objects passed in as the argument, but with no 'anonymous'
-        res.json(hydrated);
+        res.json(hydrated[0]);
       } else {
         next();
       }

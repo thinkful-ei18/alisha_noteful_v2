@@ -4,10 +4,10 @@
 const noteful = (function () {
 
 
-/***************************
- RENDER
- ***************************/
-  function render() {    
+  /***************************
+   RENDER
+   ***************************/
+  function render() {
 
     const notesList = generateNotesList(store.notes, store.currentNote);
     $('.js-notes-list').html(notesList);
@@ -25,6 +25,7 @@ const noteful = (function () {
     $('.js-note-tags-entry').html(tagsSelect);
 
     const editForm = $('.js-note-edit-form');
+    console.log(store.currentNote);
     editForm.find('.js-note-title-entry').val(store.currentNote.title);
     editForm.find('.js-note-content-entry').val(store.currentNote.content);
     //NOTE: Incoming folder id for API is `folder_id`, locally it is folderId
@@ -34,7 +35,7 @@ const noteful = (function () {
         return store.currentNote.tags.map(tag => tag.id);
       }
     });
-  
+
   }
 
 
@@ -93,7 +94,7 @@ const noteful = (function () {
     const notes = list.map(item => `<option value="${item.id}">${item.name}</option>`);
     return notes.join('');
   }
-  
+
 
 
   /***************************

@@ -18,7 +18,7 @@ $(document).ready(function () {
 
   api.search('/v2/tags')
     .then( response => {
-      store.folders = response;
+      store.tags = response;
       noteful.render();
     });
 
