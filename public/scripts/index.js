@@ -5,13 +5,19 @@ $(document).ready(function () {
   noteful.bindEventListeners();
 
   api.search('/v2/notes')
-    .then(response => {
+    .then( response => {
       store.notes = response;
       noteful.render();
     });
 
   api.search('/v2/folders')
-    .then(response => {
+    .then( response => {
+      store.folders = response;
+      noteful.render();
+    });
+
+  api.search('/v2/tags')
+    .then( response => {
       store.folders = response;
       noteful.render();
     });
