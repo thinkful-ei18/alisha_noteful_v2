@@ -40,6 +40,7 @@ router.get('/notes', (req, res, next) => {
 
 });
 
+
 /* ========== GET/READ SINGLE NOTE ========== */
 router.get('/notes/:id', (req, res, next) => {
   
@@ -67,6 +68,7 @@ router.get('/notes/:id', (req, res, next) => {
     .catch(err => next(err));
 
 });
+
 
 /* ========== PUT/UPDATE A SINGLE NOTE ========== */
 router.put('/notes/:id', (req, res, next) => {
@@ -118,12 +120,11 @@ router.put('/notes/:id', (req, res, next) => {
   
 });
 
+
 /* ========== POST/CREATE NOTE ========== */
 router.post('/notes', (req, res, next) => {
   const { title, content, folder_id, tags } = req.body; // destructured object
-  console.log(req.body);
-  console.log('TAGS', {tags});
-  // console.log('NAME', { name });
+
   /***** Never trust users - validate input *****/
   if (!title || !content) {
     const err = new Error('Must include the `title` and `content` in the request body to create a new note!');
@@ -133,11 +134,16 @@ router.post('/notes', (req, res, next) => {
  
   let noteId;
 
-  knex.insert({ title, content, folder_id }) // add the prop's listed
+  knex.insert( { title, content, folder_id } ) // add the prop's listed
     .into('notes') // to the notes table
     .returning('id') // return the id property, which is an array, that was added on the server with the created property. i.e [1004]
     .then(([id]) => { // destructure that array to get the actual value
       noteId = id; // set the variable noteId that was declared above, to the value of the id. i.e. 1004
+      const tagsInsert = tags.map( tagId => ( { note_id: noteId, tag_id: tagId } )); // the curly braces are wrapped in parens so that the arrow doesn't think the curly braces are to establish a function, when in this case they're to establish an object
+      return knex.insert(tagsInsert)
+        .into('notes_tags');
+    })
+    .then(() => {
       return knex.select('notes.id', 'title', 'content', 'created','folder_id', 'folders.name as folder_name', 'tags.name as tag:name') // target the stated columns between the 'notes' and 'folders' tables
         .from('notes') // display all rows from 'notes', but only the id, title, content && folder_id columns
         .leftJoin('folders', 'notes.folder_id', 'folders.id') // add the name of any folder whose id column matches the notes.folder_id column to the corresponding 'notes' row
@@ -161,6 +167,7 @@ router.post('/notes', (req, res, next) => {
       console.error(err);
     });
 });
+
 
 /* ========== DELETE/REMOVE A SINGLE NOTE ========== */
 router.delete('/notes/:id', (req, res, next) => {
