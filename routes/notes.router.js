@@ -53,13 +53,13 @@ router.get('/notes/:id', (req, res, next) => {
     .where({
       'notes.id': `${noteId}`
     })
-    .then( note => {
+    .then( note => { // if the noteId has multiple tags, the array will contain as many objects as there are tags. the only different prop between each one will be the tag prop. before each object is the word 'anonymous'
       if (note) {
-        const tree = new Treeize();
-        tree.setOptions({ output: { prune: false } });
-        tree.grow(note);
-        const hydrated = tree.getData();
-        res.json(hydrated[0]);
+        const tree = new Treeize(); // initiate a new instance of Treeize
+        tree.setOptions({ output: { prune: false } }); // don't filter out props with a null value
+        tree.grow(note); // behind the scenes work with baseOptions, data, stats and options objects
+        const hydrated = tree.getData(); // the same array of objects passed in as the argument, but with no 'anonymous'
+        res.json(hydrated);
       } else {
         next();
       }
@@ -72,7 +72,7 @@ router.get('/notes/:id', (req, res, next) => {
 router.put('/notes/:id', (req, res, next) => {
   
   const noteId = req.params.id;
-  const { title, content, folder_id } = req.body;
+  const { title, content, folder_id, tags } = req.body; // these keys are established in noteful.js
 
   /***** Never trust users - validate input *****/
 
@@ -85,15 +85,31 @@ router.put('/notes/:id', (req, res, next) => {
   knex('notes')
     .update({title, content, folder_id, created: new Date()})
     .where({ id: `${noteId}`})
-    .then(() => {
-      return knex.select('notes.id', 'title', 'content', 'created','folder_id', 'folders.name as folder_name')
+    .then( () => {
+      return knex.del()
+        .from('notes_tags')
+        .where({ note_id: `${noteId}` });
+    })
+    .then( () => {
+      const tagsInsert = tags.map(tid => ({ note_id: noteId, tag_id: tid }));
+      return knex.insert(tagsInsert)
+        .into('notes_tags');
+    })
+    .then( () => {
+      return knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name', 'tags.name as tags:name')
         .from('notes')
         .leftJoin('folders', 'notes.folder_id', 'folders.id')
+        .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+        .leftJoin('tags', 'tags.id', 'notes_tags.tag_id')
         .where('notes.id', noteId);
     })
-    .then(([note]) => {
+    .then( note => {
       if (note) {
-        res.json(note);
+        const tree = new Treeize();
+        tree.setOptions({ output: { prune: false } });
+        tree.grow(note);
+        const hydrated = tree.getData();
+        res.json(hydrated);
       } else {
         next();
       }
@@ -104,8 +120,10 @@ router.put('/notes/:id', (req, res, next) => {
 
 /* ========== POST/CREATE NOTE ========== */
 router.post('/notes', (req, res, next) => {
-  const { title, content, folder_id } = req.body; // destructured object
-
+  const { title, content, folder_id, tags } = req.body; // destructured object
+  console.log(req.body);
+  console.log('TAGS', {tags});
+  // console.log('NAME', { name });
   /***** Never trust users - validate input *****/
   if (!title || !content) {
     const err = new Error('Must include the `title` and `content` in the request body to create a new note!');
@@ -120,14 +138,24 @@ router.post('/notes', (req, res, next) => {
     .returning('id') // return the id property, which is an array, that was added on the server with the created property. i.e [1004]
     .then(([id]) => { // destructure that array to get the actual value
       noteId = id; // set the variable noteId that was declared above, to the value of the id. i.e. 1004
-      return knex.select('notes.id', 'title', 'content', 'created','folder_id', 'folders.name as folder_name') // target the stated columns between the 'notes' and 'folders' tables
+      return knex.select('notes.id', 'title', 'content', 'created','folder_id', 'folders.name as folder_name', 'tags.name as tag:name') // target the stated columns between the 'notes' and 'folders' tables
         .from('notes') // display all rows from 'notes', but only the id, title, content && folder_id columns
         .leftJoin('folders', 'notes.folder_id', 'folders.id') // add the name of any folder whose id column matches the notes.folder_id column to the corresponding 'notes' row
+        .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+        .leftJoin('tags', 'tags.id', 'notes_tags.tag_id')
         .where('notes.id', noteId); // filter further to show the one merged row whose notes.id matches the id # that was destructured
     })
     // the above return statement returns an array with a single object. that object is the one merged row from the 'where' clause above and has all the columns from the 'select' clause
     .then(([note]) => { // since an array is returned, we destructure it here to access the values inside
-      res.location(`${req.originalUrl}/${note.id}`).status(201).json(note);
+      if (note) {
+        const tree = new Treeize();
+        tree.setOptions({ output: { prune: false } });
+        tree.grow(note);
+        const hydrated = tree.getData();
+        res.location(`${req.originalUrl}/${note.id}`).status(201).json(hydrated);
+      } else {
+        next();
+      }
     })
     .catch(err => {
       console.error(err);
