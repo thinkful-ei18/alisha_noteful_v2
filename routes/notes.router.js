@@ -11,7 +11,7 @@ const Treeize = require('treeize');
 
 /* ========== GET/READ ALL NOTES ========== */
 router.get('/notes', (req, res, next) => {
-  const { searchTerm, folderId } = req.query;
+  const { searchTerm, folderId, tagId } = req.query;
 
   knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name', 'tags.name as tags:name')
     .from('notes')
@@ -26,6 +26,15 @@ router.get('/notes', (req, res, next) => {
     .where(function() {
       if (folderId) {
         this.where('folder_id', folderId);
+      }
+    })
+    .where(function () {
+      if (tagId) {
+        const subQuery = knex.select('notes.id')
+          .from('notes')
+          .innerJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+          .where( {'notes_tags.tag_id': `${tagId}`} );
+        this.whereIn( {'notes.id': `${subQuery}`} );
       }
     })
     .orderBy('created', 'desc')
