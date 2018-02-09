@@ -31,7 +31,7 @@ router.get('/notes', (req, res, next) => {
     .orderBy('created', 'desc')
     .then(notes => {
       const tree = new Treeize(); // create a new instance of Treeize as the variable tree
-      tree.setOptions({ output: { prune: false}});
+      tree.setOptions({ output: { prune: false } });
       tree.grow(notes); // pass 'notes' (which is an array of objects) to .grow()
       const hydrated = tree.getData();
       res.json(hydrated);
@@ -45,15 +45,21 @@ router.get('/notes/:id', (req, res, next) => {
   
   const noteId = req.params.id;
 
-  knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name')
+  knex.select('notes.id', 'title', 'content', 'created', 'folder_id', 'folders.name as folder_name', 'tags.name as tags:name')
     .from('notes')
     .leftJoin('folders', 'notes.folder_id', 'folders.id')
+    .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+    .leftJoin('tags', 'tags.id', 'notes_tags.tag_id')
     .where({
       'notes.id': `${noteId}`
     })
-    .then(([note]) => {
+    .then( note => {
       if (note) {
-        res.json(note);
+        const tree = new Treeize();
+        tree.setOptions({ output: { prune: false } });
+        tree.grow(note);
+        const hydrated = tree.getData();
+        res.json(hydrated[0]);
       } else {
         next();
       }
