@@ -9,7 +9,8 @@ const store = (function () {
     currentNote: {},
     currentQuery: {
       searchTerm: '',
-    }
+    },
+    tags: []
   };
 
 }());
