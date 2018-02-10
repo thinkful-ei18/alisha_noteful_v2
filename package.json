@@ -10,7 +10,7 @@
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js",
-		"test": "mocha --exit"
+		"test": "cross-env NODE_ENV=test mocha"
 	},
 	"dependencies": {
 		"chai-http": "^3.0.0",
@@ -22,5 +22,8 @@
 		"pg": "^7.4.1",
 		"pg-error-constants": "^1.0.0",
 		"treeize": "^2.1.2"
+	},
+	"devDependencies": {
+		"cross-env": "^5.1.3"
 	}
 }
