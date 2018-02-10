@@ -10,7 +10,7 @@
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js",
-		"test": "cross-env NODE_ENV=test mocha"
+		"test": "cross-env NODE_ENV=test mocha --exit"
 	},
 	"dependencies": {
 		"chai": "^4.1.2",

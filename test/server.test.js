@@ -22,22 +22,22 @@ chai.use(chaiSpies);
 SEED THE DATABASE BEFORE EACH TEST
 ***************************/
 
-before(function () {
-  // noop
-});
+// before(function () {
+//   // noop
+// });
 
-beforeEach(function () {
-  return seedData();
-});
+// beforeEach(function () {
+//   return seedData();
+// });
 
-afterEach(function () {
-  // noop
-});
+// afterEach(function () {
+//   // noop
+// });
 
-after(function () {
-  // destroy the connection
-  return knex.destroy();
-});
+// after(function () {
+//   // destroy the connection
+//   return knex.destroy();
+// });
 
 
 
