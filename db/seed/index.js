@@ -3,9 +3,10 @@
 const knex = require('../../knex');
 
 function seedDataFolders() {
-  const folders = require('./folders');
-  return knex('folders').del()
-    .then(() => knex('folders').insert(folders));
+  const folders = require('./folders'); // load the code in the folders.json file 
+  return knex('folders').del() // select the folders table from the dband delete the info
+    .then(() => knex('folders').insert(folders)); 
+  // then insert the data from the folders.json file into the folders table.
 }
 
 function seedDataTags() {
