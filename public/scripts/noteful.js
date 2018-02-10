@@ -25,7 +25,6 @@ const noteful = (function () {
     $('.js-note-tags-entry').html(tagsSelect);
 
     const editForm = $('.js-note-edit-form');
-    console.log(store.currentNote);
     editForm.find('.js-note-title-entry').val(store.currentNote.title);
     editForm.find('.js-note-content-entry').val(store.currentNote.content);
     //NOTE: Incoming folder id for API is `folder_id`, locally it is folderId

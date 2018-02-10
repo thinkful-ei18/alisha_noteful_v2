@@ -53,37 +53,40 @@ VALUES
 INSERT INTO folders
   (name)
 VALUES
-  ('Archive'),
-  ('Drafts'),
-  ('Personal'),
-  ('Work');
+  ('Love'),
+  ('Success'),
+  ('Growth'),
+  ('Faith');
 
 INSERT INTO notes
   (title, content, folder_id)
 VALUES
-  ( '5 life lessons learned from cats', 'Lorem ipsum i like cats', 100
+  ( 'Earl Nightingale', 'We become what
+we think about.', 102
   ),
-  ( 'What the government doesn''t want you to know about cats', 'Posuere sollicitudin aliquam ultrices sagittis orci a.', 100
-  );
+  ( 'Mark Twain', 'Twenty years from now you will be more disappointed by the things that you didn’t do than by the ones you did do, so throw off the bowlines, sail away from safe harbor, catch the trade winds in your sails.  Explore, Dream, Discover.', 102
+  ),
+  ( 'Galatians 2:20', 'My old self
+has been crucified with Christ.[a] It is no longer I who live, but Christ lives in me. So I live in this earthly body by trusting in the Son of God, who loved me and gave himself for me.', 103
+);
 
 INSERT INTO notes
   (title, content)
 VALUES
-  ( 'The most boring article about cats you''ll ever read', 'Lorem ipsum dolor sit amet laborum.'
+  ( 'Chinese Proverb', 'The best time
+to plant a tree was 20 years ago. The second best time is now.'
   ),
-  ( '7 things lady gaga has in common with cats', 'Posuere sollicitudin aliquam'
+  ( 'Stephen Covey', 'I am not a product of my circumstances. I am a product of my decisions.'
   ),
-  ( 'The most incredible article about cats you''ll ever read', 'Lorem ipsum dolor sit'
+  ( 'Maya Angelou', 'I’ve learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.'
   ),
-  ( '10 ways cats can help you live to 100', 'Posuere sollicitudin aliquam ultrices'
+  ( 'Gladys Knight and the The Pips', 'Oh, there have been times when times were hard, but always somehow I made it, I made it through. ‘Cause for every moment that I’ve spent hurting, there was a moment that I’ve spent, ah, just loving you, yeah.'
   ),
-  ( '9 reasons you can blame the recession on cats', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
+  ( 'Indira Gandhi', 'You cannot shake hands with a clenched fist.'
   ),
-  ( '10 ways marketers are making you addicted to cats', 'Posuere sollicitudin aliquam ultrices sagittis orci a'
+  ( 'Henry James', 'Do not mind anything that anyone tells you about anyone else. Judge everyone and everything for yourself.'
   ),
-  ( '11 ways investing in cats can make you a millionaire', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
-  ),
-  ( 'Why you should forget everything you learned about cats', 'Posuere sollicitudin aliquam ultrices sagittis orci a. Feugiat sed lectus vestibulum mattis'
+  ( 'Lao Tzo', 'The journey of a thousand miles begins with one step.'
   );
 
 

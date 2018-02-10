@@ -62,7 +62,6 @@ router.get('/notes/:id', (req, res, next) => {
     .leftJoin('tags', 'tags.id', 'notes_tags.tag_id')
     .where( 'notes.id', noteId )
     .then( note => { // if the noteId has multiple tags, the array will contain as many objects as there are tags. the only different prop between each one will be the tag prop. before each object is the word 'anonymous'
-      console.log('NOTE', note);
       if (note) {
         const tree = new Treeize(); // initiate a new instance of Treeize
         tree.setOptions({ output: { prune: false } }); // don't filter out props with a null value
