@@ -22,22 +22,23 @@ chai.use(chaiSpies);
 SEED THE DATABASE BEFORE EACH TEST
 ***************************/
 
-// before(function () {
-//   // noop
-// });
+before(function () { // run before the first TEST begins
+  // noop (no operation)
+});
 
-// beforeEach(function () {
-//   return seedData();
-// });
+beforeEach(function () { // run before each 'it' statement
+  // clean up from the previous test and insert new data by running the seedDataa function in './db/seed/index.js'. 
+  return seedData();
+});
 
-// afterEach(function () {
-//   // noop
-// });
+afterEach(function () { // run after each 'it' statement
+  // noop because the beforeEach function will clear out all of the data 
+});
 
-// after(function () {
-//   // destroy the connection
-//   return knex.destroy();
-// });
+after(function () { // run after the last TEST ends
+  // destroy the connection
+  return knex.destroy();
+});
 
 
 
