@@ -118,7 +118,7 @@ router.put('/notes/:id', (req, res, next) => {
         tree.setOptions({ output: { prune: false } });
         tree.grow(note);
         const hydrated = tree.getData();
-        res.json(hydrated);
+        res.json(hydrated[0]);
       } else {
         next();
       }

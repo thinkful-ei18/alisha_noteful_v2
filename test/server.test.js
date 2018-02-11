@@ -272,7 +272,7 @@ describe('PUT /v2/notes/:id', function () {
       });
   });
 
-  it.only('should return an error when missing "title" or "content" fields', function () {
+  it('should return an error when missing "title" or "content" fields', function () {
     const updateItem = {
       'foo': 'bar',
       'bizz': 'bang'
