@@ -113,7 +113,7 @@ router.put('/notes/:id', (req, res, next) => {
         .where('notes.id', noteId);
     })
     .then( note => {
-      if (note) {
+      if (note.length) {
         const tree = new Treeize();
         tree.setOptions({ output: { prune: false } });
         tree.grow(note);

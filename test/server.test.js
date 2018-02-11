@@ -169,7 +169,7 @@ describe('GET /v2/notes/:id', function () {
       });
   });
 
-  it.only('should respond with a 404 for an invalid id', function () {
+  it('should respond with a 404 for an invalid id', function () {
     const spy = chai.spy();
     return chai.request(app)
       .get('/v2/notes/9999')
@@ -254,7 +254,7 @@ describe('PUT /v2/notes/:id', function () {
       });
   });
 
-  it('should respond with a 404 for an invalid id', function () {
+  it.only('should respond with a 404 for an invalid id', function () {
     const updateItem = {
       'title': 'What about dogs?!',
       'content': 'woof woof',
