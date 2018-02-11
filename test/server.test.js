@@ -169,7 +169,7 @@ describe('GET /v2/notes/:id', function () {
       });
   });
 
-  it('should respond with a 404 for an invalid id', function () {
+  it.only('should respond with a 404 for an invalid id', function () {
     const spy = chai.spy();
     return chai.request(app)
       .get('/v2/notes/9999')
@@ -191,6 +191,7 @@ describe('POST /v2/notes', function () {
       'title': 'The best article about cats ever!',
       'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
     };
+
     return chai.request(app)
       .post('/v2/notes')
       .send(newItem)
