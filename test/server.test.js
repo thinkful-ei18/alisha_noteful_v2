@@ -206,9 +206,10 @@ describe('POST /v2/notes', function () {
       });
   });
 
-  it('should return an error when missing "title" field', function () {
+  it.only('should return an error when missing "title" or "content" fields', function () {
     const newItem = {
-      'foo': 'bar'
+      'foo': 'bar',
+      'bizz': 'bang'
     };
     const spy = chai.spy();
     return chai.request(app)
@@ -223,7 +224,7 @@ describe('POST /v2/notes', function () {
         expect(res).to.have.status(400);
         expect(res).to.be.json;
         expect(res.body).to.be.a('object');
-        expect(res.body.message).to.equal('Missing `title` in request body');
+        expect(res.body.message).to.equal('Must include the `title` and `content` in the request body to create a new note!');
       });
   });
 
