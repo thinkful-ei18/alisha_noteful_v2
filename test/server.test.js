@@ -189,7 +189,8 @@ describe('POST /v2/notes', function () {
   it('should create and return a new item when provided valid data', function () {
     const newItem = {
       'title': 'The best article about cats ever!',
-      'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
+      'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...',
+      'tags': [2]
     };
 
     return chai.request(app)
@@ -254,7 +255,7 @@ describe('PUT /v2/notes/:id', function () {
       });
   });
 
-  it.only('should respond with a 404 for an invalid id', function () {
+  it('should respond with a 404 for an invalid id', function () {
     const updateItem = {
       'title': 'What about dogs?!',
       'content': 'woof woof',
